@@ -13,67 +13,60 @@ namespace Protractor
         /// </summary>
         /// <param name="binding">The binding, e.g. '{{cat.name}}'.</param>
         /// /// <param name="exactMatch">exact match</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
-        public static By Binding(string binding, bool exactMatch = true)
+        public static By Binding(string binding, bool exactMatch = true, string rootSelector = null)
         {
-            return new JavaScriptBy(ClientSideScripts.FindBindings, binding, null, exactMatch);
+            return new JavaScriptBy(ClientSideScripts.FindBindings, binding, rootSelector, exactMatch);
         }
 
         /// <summary>
         /// Gets a mechanism to find input elements by their model name.
         /// </summary>
         /// <param name="model">The model name.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         [Obsolete("Use Model instead.")]
-        public static By Input(string model)
+        public static By Input(string model, string rootSelector = null)
         {
-            return new JavaScriptBy(ClientSideScripts.FindModel, model);
+            return new JavaScriptBy(ClientSideScripts.FindModel, model, rootSelector);
         }
-
 
         /// <summary>
         /// Gets a mechanism to find elements by their model name.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">The model name.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
-        public static By Model(string model)
+        public static By Model(string model, string rootSelector = null)
         {
-            return new JavaScriptBy(ClientSideScripts.FindModel, model);
+            return new JavaScriptBy(ClientSideScripts.FindModel, model, rootSelector);
         }
 
         /// <summary>
         /// Gets a mechanism to find textarea elements by their model name.
         /// </summary>
         /// <param name="model">The model name.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         [Obsolete("Use Model instead.")]
-        public static By TextArea(string model)
+        public static By TextArea(string model, string rootSelector = null)
         {
-            return new JavaScriptBy(ClientSideScripts.FindModel, model);
+            return new JavaScriptBy(ClientSideScripts.FindModel, model, rootSelector);
         }
 
         /// <summary>
         /// Gets a mechanism to find select elements by their model name.
         /// </summary>
         /// <param name="model">The model name.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         [Obsolete("Use Model instead.")]
-        public static By Select(string model)
+        public static By Select(string model, string rootSelector = null)
         {
-            return new JavaScriptBy(ClientSideScripts.FindModel, model);
+            return new JavaScriptBy(ClientSideScripts.FindModel, model, rootSelector);
         }
 
-
-        /// <summary>
-        /// Gets a mechanism to find  the elements in a column of an ng-repeat.
-        /// </summary>
-        /// <param name="repeat">The text of the repeater, e.g. 'cat in cats'.</param>
-        /// <param name="binding">The text of the repeater, e.g. '{{cat.name}}'.</param>
-        /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
-        public static By RepeaterColumn(string repeat, string binding)
-        {
-            return new JavaScriptBy(ClientSideScripts.FindRepeaterColumn, repeat, binding);
-        }
 
         /// <summary>
         /// Gets a mechanism to find all rows of an ng-repeat.
@@ -86,8 +79,33 @@ namespace Protractor
         }
 
         /// <summary>
+        /// Gets a mechanism to find  the elements in a column of an ng-repeat.
+        /// </summary>
+        /// <param name="repeat">The text of the repeater, e.g. 'cat in cats'.</param>
+        /// <param name="binding">The text of the repeater, e.g. '{{cat.name}}'.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
+        /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
+        public static By RepeaterColumn(string repeat, string binding, string rootSelector = null)
+        {
+            return new JavaScriptBy(ClientSideScripts.FindRepeaterColumn, repeat, binding, rootSelector);
+        }
+
+        /// <summary>
+        /// Gets a mechanism to find  the elements in a column of an ng-repeat.
+        /// </summary>
+        /// <param name="repeat">The partial text of the repeater, e.g. 'cat in cats'.</param>
+        /// <param name="index">The row index.</param>
+        /// <param name="binding">The text of the repeater, e.g. '{{cat.name}}'.</param>
+        /// <param name="rootSelector"> Optional selector of the ng-app element, default is 'body', often used values: '[ng-app]','[data-ng-app]'</param>
+        /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
+        public static By Repeaterelement(string repeat, int index, string binding, string rootSelector = null)
+        {
+            return new JavaScriptBy(ClientSideScripts.FindRepeaterElement, repeat, index, binding, rootSelector);
+        }
+
+        /// <summary>
         /// Gets a mechanism to find buttons by textual content.
-        /// </summary>    	
+        /// </summary>
         /// <param name="buttonText">TThe exact text to match.</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         public static By ButtonText(string buttonText)
@@ -97,7 +115,7 @@ namespace Protractor
 
         /// <summary>
         /// Gets a mechanism to find buttons by textual content.
-        /// </summary>    	
+        /// </summary>
         /// <param name="buttonText">The partial text to match.</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         public static By PartialButtonText(string buttonText)
@@ -107,7 +125,7 @@ namespace Protractor
 
         /// <summary>
         /// Gets a mechanism to find select option elements by their model name.
-        /// </summary>    	
+        /// </summary>
         /// <param name="option">The descriptor for the option e.g. fruit for fruit in fruits.</param>
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         public static By Options(string option)
@@ -135,7 +153,7 @@ namespace Protractor
         {
             return new JavaScriptBy(ClientSideScripts.FindSelectedOption, model);
         }
-        
+
         /// <summary>
         /// Gets a mechanism to find select option elements by their model name.
         /// </summary>
@@ -144,7 +162,7 @@ namespace Protractor
         /// <returns>A <see cref="By"/> object the driver can use to find the elements.</returns>
         public static By CssContainingText(string cssSelector, string searchText)
         {
-        	return new JavaScriptBy(ClientSideScripts.FindByCssContainingText, searchText, cssSelector );
-        }        
+            return new JavaScriptBy(ClientSideScripts.FindByCssContainingText, searchText, cssSelector);
+        }
     }
 }

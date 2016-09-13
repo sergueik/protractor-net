@@ -36,7 +36,7 @@ namespace Protractor
         /// </summary>
         /// <param name="driver">The configured webdriver instance.</param>
         /// <param name="rootElement">
-        /// The CSS selector for an element on which to find Angular. 
+        /// The CSS selector for an element on which to find Angular.
         /// <para/>
         /// This is usually 'body' but if your ng-app is on a subsection of the page it may be a subelement.
         /// </param>
@@ -70,7 +70,7 @@ namespace Protractor
         #endregion
 
         /// <summary>
-        /// Gets the CSS selector for an element on which to find Angular. 
+        /// Gets the CSS selector for an element on which to find Angular.
         /// <para/>
         /// This is usually 'body' but if your ng-app is on a subsection of the page it may be a subelement.
         /// </summary>
@@ -80,9 +80,9 @@ namespace Protractor
         }
 
         /// <summary>
-        /// If true, Protractor will not attempt to synchronize with the page before performing actions. 
-        /// This can be harmful because Protractor will not wait until $timeouts and $http calls have been processed, 
-        /// which can cause tests to become flaky. 
+        /// If true, Protractor will not attempt to synchronize with the page before performing actions.
+        /// This can be harmful because Protractor will not wait until $timeouts and $http calls have been processed,
+        /// which can cause tests to become flaky.
         /// This should be used only when necessary, such as when a page continuously polls an API using $timeout.
         /// </summary>
         public bool IgnoreSynchronization { get; set; }
@@ -90,7 +90,7 @@ namespace Protractor
         #region IWebDriver Members
 
         /// <summary>
-        /// Gets the current window handle, which is an opaque handle to this 
+        /// Gets the current window handle, which is an opaque handle to this
         /// window that uniquely identifies it within this driver instance.
         /// </summary>
         public string CurrentWindowHandle
@@ -143,9 +143,11 @@ namespace Protractor
             }
             set
             {
+                // Reset URL
+                this.driver.Url = "about:blank";
                 // TODO: test Safari & Android
                 IHasCapabilities hcDriver = this.driver as IHasCapabilities;
-                if (hcDriver != null && 
+                if (hcDriver != null &&
                     (hcDriver.Capabilities.BrowserName == "internet explorer" ||
                      hcDriver.Capabilities.BrowserName == "phantomjs"))
                 {
@@ -156,14 +158,13 @@ namespace Protractor
                 else
                 {
                     // Chrome & Firefox
-                    this.driver.Url = "about:blank";
                     this.jsExecutor.ExecuteScript("window.name += '" + AngularDeferBootstrap + "'; window.location.href = '" + value + "';");
                 }
 
                 // Make sure the page is an Angular page.
                 object isAngularApp = this.jsExecutor.ExecuteAsyncScript(ClientSideScripts.TestForAngular, 60);
-                
-                
+
+
                 if (isAngularApp is bool && (bool)isAngularApp)
                 {
                     // At this point, Angular will pause for us, until angular.resumeBootstrap is called.
@@ -175,16 +176,16 @@ namespace Protractor
                     }
                     // Resume Angular bootstrap
                     this.jsExecutor.ExecuteScript(ClientSideScripts.ResumeAngularBootstrap,
-                        String.Join(",", this.mockModules.Select(m => m.Name).ToArray()));
+                                                  String.Join(",", this.mockModules.Select(m => m.Name).ToArray()));
                 }
                 else
                 {
                     throw new InvalidOperationException(
                         String.Format("Angular could not be found on the page '{0}'", value));
                 }
-                
+
             }
-                 
+
         }
 
         /// <summary>
@@ -218,7 +219,7 @@ namespace Protractor
         /// Instructs the driver to navigate the browser to another location.
         /// </summary>
         /// <returns>
-        /// An <see cref="INavigation"/> object allowing the user to access 
+        /// An <see cref="INavigation"/> object allowing the user to access
         /// the browser's history and to navigate to a given URL.
         /// </returns>
         public INavigation Navigate()
@@ -246,7 +247,7 @@ namespace Protractor
         }
 
         /// <summary>
-        /// Finds the first <see cref="NgWebElement"/> using the given mechanism. 
+        /// Finds the first <see cref="NgWebElement"/> using the given mechanism.
         /// </summary>
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>The first matching <see cref="NgWebElement"/> on the current context.</returns>
@@ -258,12 +259,12 @@ namespace Protractor
         }
 
         /// <summary>
-        /// Finds all <see cref="NgWebElement"/>s within the current context 
+        /// Finds all <see cref="NgWebElement"/>s within the current context
         /// using the given mechanism.
         /// </summary>
         /// <param name="by">The locating mechanism to use.</param>
         /// <returns>
-        /// A <see cref="ReadOnlyCollection{T}"/> of all <see cref="NgWebElement"/>s 
+        /// A <see cref="ReadOnlyCollection{T}"/> of all <see cref="NgWebElement"/>s
         /// matching the current criteria, or an empty list if nothing matches.
         /// </returns>
         public ReadOnlyCollection<NgWebElement> FindElements(By by)
@@ -284,7 +285,7 @@ namespace Protractor
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, 
+        /// Performs application-defined tasks associated with freeing,
         /// releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
@@ -293,6 +294,23 @@ namespace Protractor
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets or sets the location for in-page navigation using the same syntax as '$location.url()'.
+        /// </summary>
+        public string Location
+        {
+            get
+            {
+                this.WaitForAngular();
+                return this.jsExecutor.ExecuteScript(ClientSideScripts.GetLocation, this.rootElement) as string;
+            }
+            set
+            {
+                this.WaitForAngular();
+                this.jsExecutor.ExecuteScript(ClientSideScripts.SetLocation, this.rootElement, value);
+            }
+        }
 
         internal void WaitForAngular()
         {
