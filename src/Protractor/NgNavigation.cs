@@ -51,17 +51,44 @@ namespace Protractor
             this.navigation.Forward();
         }
 
+        void OpenQA.Selenium.INavigation.GoToUrl(Uri url)
+        {
+            GoToUrl(url, true);
+        }
+
         /// <summary>
         /// Load a new web page in the current browser window.
         /// </summary>
         /// <param name="url">The URL to load.</param>
         public void GoToUrl(Uri url)
         {
-            if (url == null)
+            GoToUrl(url, true);
+        }
+
+        /// <summary>
+        /// Load a new web page in the current browser window.
+        /// </summary>
+        /// <param name="url">The URL to load.</param>
+        /// <param name="ensureAngularApp">Ensure the page is an Angular page by throwing an exception.</param>
+        public void GoToUrl(Uri url, bool ensureAngularApp)
+        {
+            if (ensureAngularApp)
             {
-                throw new ArgumentNullException("url", "URL cannot be null.");
+                if (url == null)
+                {
+                    throw new ArgumentNullException("url", "URL cannot be null.");
+                }
+                this.ngDriver.Url = url.ToString();
             }
-            this.ngDriver.Url = url.ToString();
+            else
+            {
+                this.navigation.GoToUrl(url);
+            }
+        }
+
+        void OpenQA.Selenium.INavigation.GoToUrl(string url)
+        {
+            GoToUrl(url, true);
         }
 
         /// <summary>
@@ -70,7 +97,24 @@ namespace Protractor
         /// <param name="url">The URL to load. It is best to use a fully qualified URL</param>
         public void GoToUrl(string url)
         {
-            this.ngDriver.Url = url;
+            GoToUrl(url, true);
+        }
+
+        /// <summary>
+        /// Load a new web page in the current browser window.
+        /// </summary>
+        /// <param name="url">The URL to load. It is best to use a fully qualified URL</param>
+        /// <param name="ensureAngularApp">Ensure the page is an Angular page by throwing an exception.</param>
+        public void GoToUrl(string url, bool ensureAngularApp)
+        {
+            if (ensureAngularApp)
+            {
+                this.ngDriver.Url = url;
+            }
+            else
+            {
+                this.navigation.GoToUrl(url);
+            }
         }
 
         /// <summary>
@@ -98,8 +142,18 @@ namespace Protractor
         /// </summary>
         public void Refresh()
         {
+            this.ngDriver.WaitForAngular();
             this.navigation.Refresh();
         }
         #endregion
+
+        /// <summary>
+        /// Browse to another page using in-page navigation.
+        /// </summary>
+        /// <param name="path">The path to load using the same syntax as '$location.url()'.</param>
+        public void GoToLocation(string path)
+        {
+            this.ngDriver.Location = path;
+        }
     }
 }

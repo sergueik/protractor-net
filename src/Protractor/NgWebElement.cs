@@ -195,7 +195,7 @@ namespace Protractor
         {
             if (by is JavaScriptBy)
             {
-                ((JavaScriptBy)by).RootElement = this.element;
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.ngDriver.RootElement, this.element };
             }
             this.ngDriver.WaitForAngular();
             return new NgWebElement(this.ngDriver, this.element.FindElement(by));
@@ -208,7 +208,7 @@ namespace Protractor
         {
             if (by is JavaScriptBy)
             {
-                ((JavaScriptBy)by).RootElement = this.element;
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.ngDriver.RootElement, this.element };
             }
             this.ngDriver.WaitForAngular();
             return new ReadOnlyCollection<NgWebElement>(this.element.FindElements(by).Select(e => new NgWebElement(this.ngDriver, e)).ToList());
@@ -238,7 +238,7 @@ namespace Protractor
         {
             if (by is JavaScriptBy)
             {
-                ((JavaScriptBy)by).RootElement = this.element;
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.ngDriver.RootElement, this.element };
             }
             this.ngDriver.WaitForAngular();
             return new ReadOnlyCollection<IWebElement>(this.element.FindElements(by).Select(e => (IWebElement)new NgWebElement(this.ngDriver, e)).ToList());
@@ -253,7 +253,7 @@ namespace Protractor
         public object Evaluate(string expression)
         {
             this.ngDriver.WaitForAngular();
-            return ((IJavaScriptExecutor)this.ngDriver.WrappedDriver).ExecuteScript(ClientSideScripts.Evaluate, this.element, expression);
+            return this.ngDriver.ExecuteScript(ClientSideScripts.Evaluate, this.element, expression);
         }
     }
 }

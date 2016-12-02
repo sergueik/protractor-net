@@ -1,3 +1,37 @@
+0.8.2 / 2016-10-21
+==================
+
+* ([95c0ddb](https://github.com/bbaia/protractor-net/commit/95c0ddb8502177ee8d1c31c94d58d930c16ec361)) Fix navigating to non-Angular page with IgnoreSynchronization set to true
+
+0.8.1 / 2016-09-18
+==================
+
+* ([31d91ed](https://github.com/bbaia/protractor-net/commit/31d91edd7c3b933364dbee1c01835730b946a92b)) Add Microsoft Edge support
+* ([842ea1d](https://github.com/bbaia/protractor-net/commit/842ea1dd44945110a983a2e37b38560ff2bd1d87)) Fix issue that caused Safari to sometimes hang on page load
+* ([e9705d6](https://github.com/bbaia/protractor-net/commit/e9705d6651b581b6b06e4e9dd0d74c8b31836719)) Implement IJavaScriptExecutor in NgWebDriver
+
+0.8.0 / 2016-05-11
+==================
+
+* ([1ffd373](https://github.com/bbaia/protractor-net/commit/1ffd373f071b426d3054cfa65149aa5f0b6c5d52)) Add initial Angular 2 support (NgBy locators not supported)
+* ([e08080c](https://github.com/bbaia/protractor-net/commit/e08080ca4e76505e374a35d3855672b241d802df)) Use Angular testability API for NgBy.Model and NgBy.Bindings
+
+0.7.1 / 2016-04-07
+==================
+
+* ([9034ae9](https://github.com/bbaia/protractor-net/commit/9034ae993321e64d241e0fe08ceb92538a13f829)) Add the NgWebDriver.Location property and NgNavigation.GoToLocation method to perform in-page navigation
+* ([373437c](https://github.com/bbaia/protractor-net/commit/373437c3e350a0dcdb4cc215f2c3747c7fdeb19e)) Reset URL on IE and PhantomJS before navigation
+
+0.7.0 / 2016-03-29
+==================
+
+* ([77e5191](https://github.com/bbaia/protractor-net/commit/77e519137117a41838c8000959afa4339f6ec4a2)) Use NgWebDriver.WaitForAngular in NgNavigation methods (Fast, Forward and Refresh)
+* ([dd6d015](https://github.com/bbaia/protractor-net/commit/dd6d015b1bee0cfebee5201e845772ee4d280ff8)) Add support for non-Angular pages
+* ([188beec](https://github.com/bbaia/protractor-net/commit/188beec9fce3d0a5f21748fda7899fd253f28d74)) Made NgWebDriver.WaitForAngular public
+* ([487fd34](https://github.com/bbaia/protractor-net/commit/487fd34165bf57036215a6aedda039124a3da00c)) Add ability to use NgBy methods as custom filter with FindsByAttribute (Page Objects pattern support)
+* ([2a89f43](https://github.com/bbaia/protractor-net/commit/2a89f43242e9c28e2645e194e09e5f437931dff8)) Remove obsolete NgBy methods (Input, TextArea, Select)
+* ([ef2a3aa](https://github.com/bbaia/protractor-net/commit/ef2a3aa71fa115a882557848e388c8aa5169ae8c)) Update to Selenium.WebDriver v2.53
+
 0.6.0 / 2015-07-14
 ==================
 

@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Edge;
 
 namespace Protractor.Test
 {
@@ -20,16 +21,20 @@ namespace Protractor.Test
                 [SetUp]
         public void SetUp()
         {
+            // Using PhantomJS
             driver = new PhantomJSDriver();
             driver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(5));
-        
-            // Using NuGet Package 'WebDriver.ChromeDriver.win32'
+            // Using Chrome
             //driver = new ChromeDriver();
 
-            // Using NuGet Package 'WebDriver.IEDriverServer.win32'
+            // Using Internet Explorer
             //var options = new InternetExplorerOptions() { IntroduceInstabilityByIgnoringProtectedModeSettings = true };
             //driver = new InternetExplorerDriver(options);
 
+            // Using Microsoft Edge
+            //driver = new EdgeDriver();
+
+            // Required for TestForAngular and WaitForAngular scripts
             driver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(5));
             ngDriver = new NgWebDriver(driver);
         }
@@ -67,7 +72,7 @@ namespace Protractor.Test
         [Test]
         public void ShouldGreetUsingBinding()
         {
-            IWebDriver ngDriver = new NgWebDriver(driver);
+            var ngDriver = new NgWebDriver(driver);
             ngDriver.Navigate().GoToUrl(base_url );
             ngDriver.FindElement(NgBy.Model("yourName")).SendKeys("Julie");
             Assert.AreEqual("Hello Julie!", ngDriver.FindElement(NgBy.Binding("yourName")).Text);
@@ -91,6 +96,18 @@ namespace Protractor.Test
             var elements = ngDriver.FindElements(NgBy.Repeater("todo in todoList.todos"));
             Assert.AreEqual("build an angular app", elements[1].Text);
             Assert.AreEqual(false, elements[1].Evaluate("todo.done"));
+        }
+
+        [Test]
+        public void NonAngularPageShouldBeSupported()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                var ngDriver = new NgWebDriver(driver);
+                ngDriver.IgnoreSynchronization = true;
+                ngDriver.Navigate().GoToUrl("http://www.google.com");
+                ngDriver.IgnoreSynchronization = false;
+            });
         }
     }
 }

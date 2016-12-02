@@ -11,11 +11,12 @@ namespace Protractor
     /// <summary>
     /// Provides a mechanism to write tests against an AngularJS application.
     /// </summary>
-    public class NgWebDriver : IWebDriver, IWrapsDriver
+    public class NgWebDriver : IWebDriver, IWrapsDriver, IJavaScriptExecutor
     {
         private const string AngularDeferBootstrap = "NG_DEFER_BOOTSTRAP!";
         private IWebDriver driver;
         private IJavaScriptExecutor jsExecutor;
+        private bool isAngular2;
         private string rootElement;
         private NgModule[] mockModules;
 
@@ -134,7 +135,7 @@ namespace Protractor
                 if (hcDriver != null && hcDriver.Capabilities.BrowserName == "internet explorer")
                 {
                     // 'this.driver.Url' does not work on IE
-                    return this.jsExecutor.ExecuteScript(ClientSideScripts.GetLocationAbsUrl, this.rootElement) as string;
+                    return this.ExecuteScript(ClientSideScripts.GetLocationAbsUrl, this.rootElement) as string;
                 }
                 else
                 {
@@ -145,14 +146,16 @@ namespace Protractor
             {
                 // Reset URL
                 this.driver.Url = "about:blank";
-                // TODO: test Safari & Android
+
+                // TODO: test Android
                 IHasCapabilities hcDriver = this.driver as IHasCapabilities;
                 if (hcDriver != null &&
                     (hcDriver.Capabilities.BrowserName == "internet explorer" ||
-                     hcDriver.Capabilities.BrowserName == "phantomjs"))
+                     hcDriver.Capabilities.BrowserName == "MicrosoftEdge" ||
+                     hcDriver.Capabilities.BrowserName == "phantomjs" ||
+                     hcDriver.Capabilities.BrowserName.ToLower() == "safari"))
                 {
-                    // Internet Explorer & PhantomJS
-                    this.jsExecutor.ExecuteScript("window.name += '" + AngularDeferBootstrap + "';");
+                    this.ExecuteScript("window.name += '" + AngularDeferBootstrap + "';");
                     this.driver.Url = value;
                 }
                 else
@@ -167,12 +170,39 @@ namespace Protractor
 
                 if (isAngularApp is bool && (bool)isAngularApp)
                 {
-                    // At this point, Angular will pause for us, until angular.resumeBootstrap is called.
-
-                    // Register extra modules
-                    foreach (NgModule ngModule in this.mockModules)
+                    try
                     {
-                        this.jsExecutor.ExecuteScript(ngModule.Script);
+                        // Make sure the page is an Angular page.
+                        long? angularVersion = this.ExecuteAsyncScript(ClientSideScripts.TestForAngular) as long?;
+                        if (angularVersion.HasValue)
+                        {
+                            if (angularVersion.Value == 1)
+                            {
+                                // At this point, Angular will pause for us, until angular.resumeBootstrap is called.
+
+                                // Register extra modules
+                                foreach (NgModule ngModule in this.mockModules)
+                                {
+                                    this.ExecuteScript(ngModule.Script);
+                                }
+                                // Resume Angular bootstrap
+                                this.ExecuteScript(ClientSideScripts.ResumeAngularBootstrap,
+                                    String.Join(",", this.mockModules.Select(m => m.Name).ToArray()));
+                            }
+                            else if (angularVersion.Value == 2)
+                            {
+                                this.isAngular2 = true;
+                                if (this.mockModules.Length > 0)
+                                {
+                                    throw new NotSupportedException("Mock modules are not supported in Angular 2");
+                                }
+                            }
+                        }
+                    }
+                    catch (WebDriverTimeoutException wdte)
+                    {
+                        throw new InvalidOperationException(
+                            String.Format("Angular could not be found on the page '{0}'", value), wdte);
                     }
                     // Resume Angular bootstrap
                     this.jsExecutor.ExecuteScript(ClientSideScripts.ResumeAngularBootstrap,
@@ -215,6 +245,11 @@ namespace Protractor
             return this.driver.Manage();
         }
 
+        INavigation OpenQA.Selenium.IWebDriver.Navigate()
+        {
+            return this.Navigate();
+        }
+
         /// <summary>
         /// Instructs the driver to navigate the browser to another location.
         /// </summary>
@@ -222,7 +257,7 @@ namespace Protractor
         /// An <see cref="INavigation"/> object allowing the user to access
         /// the browser's history and to navigate to a given URL.
         /// </returns>
-        public INavigation Navigate()
+        public NgNavigation Navigate()
         {
             return new NgNavigation(this, this.driver.Navigate());
         }
@@ -254,6 +289,10 @@ namespace Protractor
         /// <exception cref="NoSuchElementException">If no element matches the criteria.</exception>
         public NgWebElement FindElement(By by)
         {
+            if (by is JavaScriptBy)
+            {
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.RootElement };
+            }
             this.WaitForAngular();
             return new NgWebElement(this, this.driver.FindElement(by));
         }
@@ -269,6 +308,10 @@ namespace Protractor
         /// </returns>
         public ReadOnlyCollection<NgWebElement> FindElements(By by)
         {
+            if (by is JavaScriptBy)
+            {
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.RootElement };
+            }
             this.WaitForAngular();
             return new ReadOnlyCollection<NgWebElement>(this.driver.FindElements(by).Select(e => new NgWebElement(this, e)).ToList());
         }
@@ -280,6 +323,10 @@ namespace Protractor
 
         ReadOnlyCollection<IWebElement> ISearchContext.FindElements(By by)
         {
+            if (by is JavaScriptBy)
+            {
+                ((JavaScriptBy)by).AdditionalScriptArguments = new object[] { this.RootElement };
+            }
             this.WaitForAngular();
             return new ReadOnlyCollection<IWebElement>(this.driver.FindElements(by).Select(e => (IWebElement)new NgWebElement(this, e)).ToList());
         }
@@ -316,7 +363,14 @@ namespace Protractor
         {
             if (!this.IgnoreSynchronization)
             {
-                this.jsExecutor.ExecuteAsyncScript(ClientSideScripts.WaitForAngular, this.rootElement);
+                if (this.isAngular2)
+                {
+                    this.ExecuteAsyncScript(ClientSideScripts.WaitForAllAngular2);
+                }
+                else
+                {
+                    this.ExecuteAsyncScript(ClientSideScripts.WaitForAngular, this.rootElement);
+                }
             }
         }
 
