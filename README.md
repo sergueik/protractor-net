@@ -1,27 +1,15 @@
-Protractor for .NET
-===================
+### Info 
+Protractor for .NET - integrationproject for the fork of the [protractor-net](https://github.com/bbaia/protractor-net).
 
-The .NET port of [Protractor](https://github.com/angular/protractor), an end to end test framework for Angular applications.
+It has some additional features compared to upstream project.
 
-Protractor for .NET is built on top of [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) C# binding.
+### Note
 
-## Get it from NuGet!
+This fork master branch is periodically unstable due to diverged histories. For the stable version please use [development directory](https://github.com/sergueik/powershell_selenium/tree/master/csharp/protractor-net)
 
-    PM> Install-Package Protractor
 
-Supports Microsoft .NET Framework 3.5 and higher.
 
-## Write tests!
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
-```csharp
-[Test]
-public void ShouldGreetUsingBinding()
-{
-    using (var ngDriver = new NgWebDriver(new ChromeDriver()))
-    {
-        ngDriver.Url = "http://www.angularjs.org";
-        ngDriver.FindElement(NgBy.Model("yourName")).SendKeys("Julie");
-        Assert.AreEqual("Hello Julie!", ngDriver.FindElement(NgBy.Binding("yourName")).Text);
-    }
-}
-```
+
