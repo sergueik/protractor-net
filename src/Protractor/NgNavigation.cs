@@ -128,15 +128,6 @@ namespace Protractor
             jsExecutor.ExecuteScript(ClientSideScripts.SetLocation, new Object[] { selector, url });
         }
 
-
-        /// <summary>
-        /// Browse to another page using in-page navigation.
-        /// </summary>
-        /// <param name="url">The URL / path to load using the same syntax as '$location.url()'.</param>
-        public void GoToLocation(string url)
-        {
-            this.ngDriver.Location = url;
-        }
         /// <summary>
         /// Refreshes the current page.
         /// </summary>

@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="model">The model name.</param>
         public NgBySelectedOption(string model)
-            : base(ClientSideScripts.FindSelectedOptions, model)
+            : base(ClientSideScripts.FindSelectedOption, model)
         {
         }
     }

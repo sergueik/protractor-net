@@ -253,7 +253,7 @@ namespace Protractor
         public object Evaluate(string expression)
         {
             this.ngDriver.WaitForAngular();
-            return this.ngDriver.ExecuteScript(ClientSideScripts.Evaluate, this.element, expression);
+            return ((IJavaScriptExecutor)this.ngDriver.WrappedDriver).ExecuteScript(ClientSideScripts.Evaluate, this.element, expression);
         }
     }
 }

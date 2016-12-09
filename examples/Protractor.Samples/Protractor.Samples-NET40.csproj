@@ -155,6 +155,7 @@
     <Compile Include="PageObjects\Support\TutorialStep5Page.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="IEDriverServer.exe" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
@@ -163,11 +164,7 @@
       <Link>phantomjs.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\packages\Selenium.WebDriver.IEDriver.2.53.0.0\driver\IEDriverServer.exe">
-      <Link>IEDriverServer.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\packages\Selenium.WebDriver.ChromeDriver.2.21.0.0\driver\chromedriver.exe">
+    <Content Include="..\..\packages\Selenium.WebDriver.ChromeDriver.2.24.0.0\driver\chromedriver.exe">
       <Link>chromedriver.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

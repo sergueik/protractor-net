@@ -90,5 +90,10 @@ namespace Protractor
 			}
 			return elements;
 		}
+		/// <summary>
+        /// Gets or sets any additional arguments to the script.
+        /// </summary>
+        public object[] AdditionalScriptArguments { get; set; }
+		
 	}
 }
